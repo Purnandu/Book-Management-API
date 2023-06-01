@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Books API</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Books API</h1>
+
+  <h2>Retrieve all books</h2>
+  <button onclick="getBooks()">Get Books</button>
+  <div id="booksContainer"></div>
+
+  <h2>Create a new book</h2>
+  <input type="text" id="title" placeholder="Title" required>
+  <input type="text" id="author" placeholder="Author" required>
+  <input type="text" id="description" placeholder="Description">
+  <input type="number" id="publishedYear" placeholder="Published Year">
+  <button onclick="createBook()">Create Book</button>
+
+  <script>
+    // Retrieve all books
+    function getBooks() {
+      $.get('/books', function(data) {
+        var booksContainer = $('#booksContainer');
+        booksContainer.empty();
+        data.forEach(function(book) {
+          var bookInfo = $('<div>').text('Title: ' + book.title + ', Author: ' + book.author);
+          booksContainer.append(bookInfo);
+        });
+      });
+    }
+
+    // Create a new book
+    function createBook() {
+      var title = $('#title').val();
+      var author = $('#author').val();
+      var description = $('#description').val();
+      var publishedYear = $('#publishedYear').val();
+
+      var bookData = {
+        title: title,
+        author: author,
+        description: description,
+        publishedYear: publishedYear
+      };
+
+      $.ajax({
+        url: '/books',
+        type: 'POST',
+        data: JSON.stringify(bookData),
+        contentType: 'application/json',
+        success: function(data) {
+          alert('Book created successfully!');
+          getBooks(); // Refresh the list of books
+        },
+        error: function(error) {
+          alert('Failed to create book. Please try again.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
